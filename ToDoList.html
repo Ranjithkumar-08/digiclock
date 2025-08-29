@@ -1,0 +1,58 @@
+<head>
+    <title>ToDoList</title>
+</head>
+
+<body>
+
+    <style>
+        #one{
+            height:15%;
+            width:16%;
+            background-color: red;
+            font-size: 25px;
+            text-align: center;
+        }
+        #two{
+            height:100%;
+            width:16%;
+            background-color: pink;
+            font-size: 25px;
+            text-align: center;
+        }
+        .btn{
+            height:10%;
+            width:10%;
+            background-color: blue;
+            font-size: 25px;
+            border-radius: 5%;
+            text-align: center;
+        }
+        body{
+            background-color: sandybrown;
+        }
+    </style>
+    <center>
+<input id="one">
+<button class="btn"onclick="add()">Add</button>
+<ul id="two">
+    <li>Hello
+        <button onclick="delete1(event)">Delete</button>
+    </li>
+</ul>
+
+<script>
+    var input=document.getElementById("one")
+    var ul=document.getElementById("two")
+    function add()
+    {
+         var insert=document.createElement("li")
+         insert.innerHTML=input.value + "<button onclick='delete1(event)'>Delete</button>"
+         ul.append(insert)
+    }
+    function delete1(event)
+    {
+        event.target.parentElement.remove()
+    }
+</script>
+</center>
+</body>

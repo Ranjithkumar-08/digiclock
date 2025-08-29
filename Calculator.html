@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      background-image: url("img/classroom.png");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+
+    .calculator {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      width: 300px;
+    }
+
+    .display {
+      width: 100%;
+      height: 50px;
+      font-size: 24px;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      height: 50px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #d0d0d0;
+    }
+
+    .clear-btn {
+      background-color: #ffaaaa;
+    }
+
+    .backspace-btn {
+      background-color: #ffd580;
+    }
+
+    .operator {
+      background-color: #add8e6;
+    }
+
+    .history {
+      margin-top: 15px;
+      max-height: 100px;
+      overflow-y: auto;
+      font-size: 14px;
+      background-color: #f8f8f8;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .history h4 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" class="display" id="display" disabled />
+    <div class="buttons">
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('/')" class="operator">/</button>
+
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('*')" class="operator">*</button>
+
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="appendValue('-')" class="operator">-</button>
+
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="appendValue('+')" class="operator">+</button>
+
+      <button onclick="clearDisplay()" class="clear-btn">C</button>
+      <button onclick="backspace()" class="backspace-btn" style="grid-column: span 3;">⌫</button>
+    </div>
+
+    <div class="history" id="history">
+      <h4>History</h4>
+      <ul id="historyList" style="list-style: none; padding-left: 0;"></ul>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+    let historyList = document.getElementById('historyList');
+
+    function appendValue(value) {
+      const operators = ['+', '-', '*', '/'];
+
+      if (display.value === '' && ['+', '*', '/'].includes(value)) return;
+
+      const lastChar = display.value.slice(-1);
+      if (operators.includes(lastChar) && operators.includes(value)) return;
+
+      if (value === '.') {
+        const parts = display.value.split(/[\+\-\*\/]/);
+        const lastPart = parts[parts.length - 1];
+        if (lastPart.includes('.')) return;
+      }
+
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        if (/^[0-9+\-*/.() ]+$/.test(display.value)) {
+          const result = new Function('return ' + display.value)();
+          addToHistory(display.value + ' = ' + result);
+          display.value = result;
+        } else {
+          display.value = 'Invalid';
+        }
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    function addToHistory(entry) {
+      const li = document.createElement('li');
+      li.textContent = entry;
+      historyList.prepend(li);
+      if (historyList.children.length > 5) {
+        historyList.removeChild(historyList.lastChild);
+      }
+    }
+
+    document.addEventListener('keydown', function(event) {
+      const key = event.key;
+      if ('0123456789+-*/.'.includes(key)) {
+        appendValue(key);
+      } else if (key === 'Enter') {
+        event.preventDefault();
+        calculate();
+      } else if (key === 'Backspace') {
+        backspace();
+      } else if (key === 'Escape') {
+        clearDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
